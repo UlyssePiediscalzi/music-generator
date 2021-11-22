@@ -8,6 +8,7 @@ wheel>=0.29
 numpy
 pandas
 scikit-learn
+jupyter
 
 # tests/linter
 black
@@ -28,5 +29,9 @@ joblib
 memoized-property
 termcolor
 
+# Music
 pypianoroll
+pretty_midi
+pyfluidsynth
 glob
+
