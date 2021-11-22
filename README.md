@@ -8,7 +8,7 @@ Please document the project the better you can.
 
 Documentation :
 
-    1. General articles :
+1. General articles :
     - https://towardsdatascience.com/creating-a-pop-music-generator-with-the-transformer-5867511b382a
     - https://towardsdatascience.com/how-to-generate-music-using-a-lstm-neural-network-in-keras-68786834d4c5
     - https://towardsdatascience.com/making-music-with-machine-learning-908ff1b57636
