@@ -6,7 +6,7 @@
 
 Please document the project the better you can.
 
-Documentation :
+# Documentation :
 
 1. General articles :
     - https://towardsdatascience.com/creating-a-pop-music-generator-with-the-transformer-5867511b382a
