@@ -33,5 +33,3 @@ termcolor
 pypianoroll
 pretty_midi
 pyfluidsynth
-glob
-
