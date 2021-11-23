@@ -22,3 +22,15 @@ def multitrack_to_midi(multitracks, save_path='raw_data/midi'):
     for i in range(len(multitracks)):
         pypianoroll.write(f'{save_path}/track{i}.midi', multitracks[i])
     return 'midi files saved successfully'
+
+
+def fetching_instrument_pianorolls(multitracks, instrument):
+    '''Takes the output of get_npz_data() function and a
+    string corresponding either to : Piano, Bass, Drum, Strings, Guitar.
+    Returns a list of arrays'''
+    pianoroll_arrays = []
+    for multi in multitracks:
+        for standard in multi:
+            if standard.name in instrument and standard.pianoroll.shape[0] != 0:
+                pianoroll_arrays.append(standard.pianoroll)
+    return pianoroll_arrays
