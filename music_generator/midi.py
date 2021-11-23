@@ -14,11 +14,11 @@ def sample_multitrack(multitrack, track, x_qnotes=4, y_qnotes=2):
     quarter_notes = int(pianoroll.shape[0]/qnote)
     X = []
     y = []
-    for i in range(quarter_notes-x_qnotes-y_qnotes):
-        X_start = i*qnote
-        X_end = (i+x_qnotes)*qnote
-        y_start = (i+1+x_qnotes)*qnote
-        y_end = (i+x_qnotes+1+y_qnotes)*qnote
+    for i in range(int(np.floor(quarter_notes/(x_qnotes+y_qnotes)))):
+        X_start = i*x_qnotes *qnote
+        X_end = ((i+1)*x_qnotes) *qnote
+        y_start = X_end
+        y_end = ((i+1)*x_qnotes + y_qnotes) *qnote
         X.append(pianoroll[X_start:X_end])
         y.append(pianoroll[y_start:y_end])
     return np.array(X), np.array(y)
