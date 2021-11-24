@@ -1,8 +1,45 @@
 import pypianoroll
 import numpy as np
+import matplotlib.pyplot as plt
 import IPython
 
+def flatten(pianorolls):
+    """Automatically joins multiple pianorolls into a single sequence."""
+
+    rolls, steps, pitch  = pianorolls.shape
+    return pianorolls.reshape(rolls*steps, pitch)
+
+def plot_pianoroll(pianoroll):
+    """Plots pianoroll pitches through time for given pianoroll.
+    Automatically joins multiple pianorolls if an array of pianorolls is passed.
+
+    Example
+    -------
+
+        plot_pianoroll(mtrack, track.pianoroll)
+
+        plot_pianoroll(mtrack, flatten(pred[10:20]))
+    """
+
+    if len(pianoroll.shape) == 3:
+      pianoroll = flatten(pianoroll)
+    fig, ax = plt.subplots(figsize=(14,4))
+    return pypianoroll.plot_pianoroll(ax=ax, pianoroll=pianoroll);
+
 def play_pianoroll(multitrack, pianoroll):
+    """Returns an IPython player for given pianoroll.
+    Automatically joins multiple pianorolls if an array of pianorolls is passed.
+
+    Example
+    -------
+
+        play_pianoroll(mtrack, track.pianoroll)
+
+        play_pianoroll(mtrack, flatten(pred[10:20]))
+    """
+
+    if len(pianoroll.shape) == 3:
+      pianoroll = flatten(pianoroll)
     track = pypianoroll.StandardTrack(program=0, is_drum=False, pianoroll=pianoroll)
     tempo = np.ones(pianoroll.shape[0]) * multitrack.tempo[0]
     mt = pypianoroll.Multitrack(tempo=tempo, tracks=[track])
