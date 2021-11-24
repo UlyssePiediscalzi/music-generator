@@ -46,7 +46,12 @@ class DivideAndCompose:
     def plot(self, song):
         plot_pianoroll(song.tracks[0].pianoroll)
 
+
 class DivideAndComposeBidirectional(DivideAndCompose):
+    ''''
+    Same as DivideAndCompose class but it builds a model using bidirectional
+    layers and GRU
+    '''
     def init_model(self, quarter_notes_window=12):
         X, y = sample_multitrack(self.mtrack, self.track, quarter_notes_window, quarter_notes_window)
         self.X = X
