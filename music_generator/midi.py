@@ -9,6 +9,9 @@ def flatten(pianorolls):
     rolls, steps, pitch  = pianorolls.shape
     return pianorolls.reshape(rolls*steps, pitch)
 
+def get_instrument(mtrack, name):
+    return [track for track in mtrack.tracks if track.name == name and type(track) is pypianoroll.track.StandardTrack][0]
+
 def plot_pianoroll(pianoroll):
     """Plots pianoroll pitches through time for given pianoroll.
     Automatically joins multiple pianorolls if an array of pianorolls is passed.
@@ -26,6 +29,13 @@ def plot_pianoroll(pianoroll):
     fig, ax = plt.subplots(figsize=(14,4))
     return pypianoroll.plot_pianoroll(ax=ax, pianoroll=pianoroll);
 
+def create_multitrack(basemultitrack, pianoroll):
+    if len(pianoroll.shape) == 3:
+      pianoroll = flatten(pianoroll)
+    track = pypianoroll.StandardTrack(program=0, is_drum=False, pianoroll=pianoroll)
+    tempo = basemultitrack.tempo[:pianoroll.shape[0]]
+    return pypianoroll.Multitrack(tempo=tempo, tracks=[track])
+
 def play_pianoroll(multitrack, pianoroll):
     """Returns an IPython player for given pianoroll.
     Automatically joins multiple pianorolls if an array of pianorolls is passed.
@@ -38,11 +48,7 @@ def play_pianoroll(multitrack, pianoroll):
         play_pianoroll(mtrack, flatten(pred[10:20]))
     """
 
-    if len(pianoroll.shape) == 3:
-      pianoroll = flatten(pianoroll)
-    track = pypianoroll.StandardTrack(program=0, is_drum=False, pianoroll=pianoroll)
-    tempo = np.ones(pianoroll.shape[0]) * multitrack.tempo[0]
-    mt = pypianoroll.Multitrack(tempo=tempo, tracks=[track])
+    mt = create_multitrack(multitrack, pianoroll)
     return IPython.display.Audio(data=mt.to_pretty_midi().synthesize(), rate=44100)
 
 def sample_multitrack(multitrack, track, x_qnotes=4, y_qnotes=2):
