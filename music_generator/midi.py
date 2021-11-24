@@ -67,7 +67,7 @@ def sample_multitrack(multitrack, track, x_qnotes=4, y_qnotes=2):
     return np.array(X), np.array(y)
 
 
-def multi_sample_pianorolls(pianorolls, qnote=24, x_qnotes=4, y_qnotes=4):
+def multi_sample_pianorolls(pianorolls, qnote=4, x_qnotes=4, y_qnotes=4):
     '''pianorolls = output of 'fetching_instrument_pianorolls' function in data.py.
     Returns an array concatenating all the samples of n songs.'''
     X = []
