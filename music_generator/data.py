@@ -1,16 +1,35 @@
 import pypianoroll
 import glob
+import os
 
 
-def get_npz_data(n, data_path='raw_data/lpd_5/lpd_5_cleansed'):
+def get_npz_data(n):
     ''''
     Load n number of npz files from all of the folders contained in the raw_data folder
     '''
     # get a list of the possible filepaths for the npz files
-    files = glob.glob(f'{data_path}/**/**/**/**/*.npz')
+    files = []
+
+    if 'CLOUDSDK_CONFIG' in os.environ:
+      print("after os envirion")
+      with open("/content/drive/MyDrive/lpd_5/list_file_drive.txt", 'r') as f:
+        print(f)
+        for line in f:
+          files.append(line.rstrip('\n'))
+    else:
+      print("inside else no env")
+      with open("../list_file_local.txt", 'r') as f:
+        print(f)
+        for line in f:
+          files.append(line.rstrip('\n'))
 
     # Load n files from the dataset
+    print("FILEEEEEES")
+    print(files)
+    print("FILEEEEEES")
+
     multitracks = [pypianoroll.load(fp) for fp in files[0:n]]
+
     return multitracks
 
 
