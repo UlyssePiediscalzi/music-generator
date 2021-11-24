@@ -15,7 +15,7 @@ def get_npz_data(n):
         for line in f:
           files.append(line.rstrip('\n'))
     else:
-      with open('../raw_data/list_file_local.txt', 'r') as f:
+      with open('list_file_local.txt', 'r') as f:
         for line in f:
           files.append(line.rstrip('\n'))
 
