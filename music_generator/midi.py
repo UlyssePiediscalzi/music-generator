@@ -82,15 +82,3 @@ def multi_sample_pianorolls(pianorolls, qnote=24, x_qnotes=4, y_qnotes=4):
             X.append(pianoroll[X_start:X_end])
             y.append(pianoroll[y_start:y_end])
     return np.array(X), np.array(y)
-
-  def
-def average_non_zeros(array):
-  average_array = []
-  for row in array:
-    mean = row[np.nonzero(row)].mean()
-    if math.isnan(mean):
-      average_array.append(0)
-    else:
-      average_array.append(mean)
-
-  return np.array(average_array)
