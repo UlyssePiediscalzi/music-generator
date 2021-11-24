@@ -1,6 +1,7 @@
 import pypianoroll
 import glob
 import os
+import math
 
 
 def get_npz_data(n):
@@ -44,3 +45,14 @@ def fetching_instrument_pianorolls(multitracks, instrument):
             if standard.name in instrument and standard.pianoroll.shape[0] != 0:
                 pianoroll_arrays.append(standard.pianoroll)
     return pianoroll_arrays
+
+def average_non_zeros(sample):
+    average_array = []
+    for row in sample:
+      mean = row[np.nonzero(row)].mean()
+      if math.isnan(mean):
+        average_array.append(0)
+      else:
+        average_array.append(mean)
+
+    return np.array(average_array)
