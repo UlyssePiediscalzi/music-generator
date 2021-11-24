@@ -11,7 +11,7 @@ class DivideAndCompose:
         self.mtrack = mtrack
         self.track = get_instrument(mtrack, instrument)
         plot_pianoroll(self.track.pianoroll)
-    
+
     def init_model(self, quarter_notes_window=6):
         X, y = sample_multitrack(self.mtrack, self.track, quarter_notes_window, quarter_notes_window)
         self.X = X
@@ -34,14 +34,35 @@ class DivideAndCompose:
         callback = EarlyStopping(monitor='loss', patience=patience)
         history = self.model.fit(self.X, self.y, validation_split=0.2, epochs=epochs, batch_size=batch_size, use_multiprocessing=True, callbacks=[callback], **kwargs)
         return history
-    
+
     def createSong(self, quarter_notes=5):
         l = int(self.X.shape[0] / quarter_notes)
         song = self.model.predict(self.X[::l]).astype(np.uint8)
         return create_multitrack(self.mtrack, song)
-    
+
     def play(self, song):
         return play_pianoroll(self.mtrack, song.tracks[0].pianoroll)
-    
+
     def plot(self, song):
         plot_pianoroll(song.tracks[0].pianoroll)
+
+
+class DivideAndComposeBidirectional(DivideAndCompose):
+    ''''
+    Same as DivideAndCompose class but it builds a model using bidirectional
+    layers and GRU
+    '''
+    def init_model(self, quarter_notes_window=12):
+        X, y = sample_multitrack(self.mtrack, self.track, quarter_notes_window, quarter_notes_window)
+        self.X = X
+        self.y = y
+        input_shape = X[0].shape
+        model = models.Sequential()
+        model.add(layers.Bidirectional(layers.GRU(512, return_sequences=True, activation='tanh'),input_shape=input_shape))
+        model.add(layers.Bidirectional(layers.GRU(512, return_sequences=True, activation='tanh')))
+        model.add(layers.Dense(256, activation='relu'))
+        model.add(layers.Dense(128, activation='relu'))
+        model.compile(loss='mse', optimizer=RMSprop(learning_rate=0.005))
+        model.summary()
+        self.model = model
+        return model
