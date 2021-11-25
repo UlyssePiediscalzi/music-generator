@@ -4,7 +4,7 @@ from tensorflow.keras import layers
 from tensorflow.keras.optimizers import RMSprop
 from tensorflow.keras.callbacks import EarlyStopping
 
-from music_generator.midi import play_pianoroll, sample_multitrack, plot_pianoroll, create_multitrack, get_instrument
+from music_generator.midi import play_pianoroll, sample_multitrack, plot_pianoroll, create_multitrack, get_instrument, sample_roll
 
 class DivideAndCompose:
     def __init__(self, mtrack, instrument='Piano'):
@@ -81,3 +81,32 @@ class DivideAndComposeBidirectional(DivideAndCompose):
         model.summary()
         self.model = model
         return model
+
+class MultiSongModel(DivideAndCompose):
+    def __init__(self, pianorolls, rate=24):
+        self.pianorolls = pianorolls
+    
+    def init_model(self, quarter_notes_window=8):
+        X = []
+        y = []
+        for roll in self.pianorolls:
+            Xt, yt = sample_roll(24, roll, quarter_notes_window, quarter_notes_window)
+            X.append(Xt)
+            y.append(yt)
+        X = np.concatenate(X)
+        y = np.concatenate(y)
+        self.X = X
+        self.y = y
+        input_shape = X[0].shape
+        output_shape = y[0].shape[1]
+        model = models.Sequential()
+        model.add(layers.SimpleRNN(128, return_sequences=True, activation='tanh', input_shape=input_shape))
+        model.add(layers.SimpleRNN(128 * 8, return_sequences=True, activation='tanh'))
+        model.add(layers.Dense(output_shape * 8, activation='relu'))
+        model.add(layers.Dense(output_shape * 4, activation='relu'))
+        model.add(layers.Dense(output_shape, activation='relu'))
+        model.compile(loss='mse', optimizer=RMSprop(learning_rate=0.005))
+        model.summary()
+        self.model = model
+        return model
+
