@@ -35,16 +35,31 @@ class DivideAndCompose:
         history = self.model.fit(self.X, self.y, validation_split=0.2, epochs=epochs, batch_size=batch_size, use_multiprocessing=True, callbacks=[callback], **kwargs)
         return history
 
-    def createSong(self, quarter_notes=5):
-        l = int(self.X.shape[0] / quarter_notes)
-        song = self.model.predict(self.X[::l]).astype(np.uint8)
-        return create_multitrack(self.mtrack, song)
+    def createRoll(self, input_roll):
+        """Create song given a input pianoroll of same size"""
+        assert input_roll.shape[1] == self.X.shape[1], f"Input roll needs to be split in steps of {self.X.shape[1]}"
+        song = self.model.predict(input_roll).astype(np.uint8)
+        return np.concatenate(song)
+    
+    def continueRoll(self, intervals=5, intro_roll=None):
+        """Create song given an introduction. Song will have intervals time the introduction of length."""
+        net_in = self.X[:3]
+        if intro_roll is not None:
+            assert intro_roll.shape[1] == self.X.shape[1], f"Intro roll needs to be split in steps of {self.X.shape[1]}"
+            net_in = intro_roll
+        roll = [net_in]
+        for i in range(intervals-1):
+            piece = self.model.predict(net_in).astype(np.uint8)
+            net_in = piece
+            roll.append(piece)
+        roll = np.concatenate(roll)
+        return roll
 
-    def play(self, song):
-        return play_pianoroll(self.mtrack, song.tracks[0].pianoroll)
+    def play(self, roll):
+        return play_pianoroll(self.mtrack, roll)
 
-    def plot(self, song):
-        plot_pianoroll(song.tracks[0].pianoroll)
+    def plot(self, roll):
+        plot_pianoroll(roll)
 
 
 class DivideAndComposeBidirectional(DivideAndCompose):
