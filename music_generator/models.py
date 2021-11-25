@@ -40,11 +40,11 @@ class DivideAndCompose:
         song = self.model.predict(self.X[::l]).astype(np.uint8)
         return create_multitrack(self.mtrack, song)
 
-    def play(self, song):
-        return play_pianoroll(self.mtrack, song.tracks[0].pianoroll)
+    def play(self, roll):
+        return play_pianoroll(self.mtrack, roll)
 
-    def plot(self, song):
-        plot_pianoroll(song.tracks[0].pianoroll)
+    def plot(self, roll):
+        plot_pianoroll(roll)
 
 
 class DivideAndComposeBidirectional(DivideAndCompose):
