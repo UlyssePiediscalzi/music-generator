@@ -86,7 +86,7 @@ class MultiSongModel(DivideAndCompose):
     def __init__(self, pianorolls, rate=24):
         self.pianorolls = pianorolls
     
-    def init_model(self, quarter_notes_window=8):
+    def init_model(self, quarter_notes_window=8, model_layers=None):
         X = []
         y = []
         for roll in self.pianorolls:
@@ -100,11 +100,15 @@ class MultiSongModel(DivideAndCompose):
         input_shape = X[0].shape
         output_shape = y[0].shape[1]
         model = models.Sequential()
-        model.add(layers.SimpleRNN(128, return_sequences=True, activation='tanh', input_shape=input_shape))
-        model.add(layers.SimpleRNN(128 * 8, return_sequences=True, activation='tanh'))
-        model.add(layers.Dense(output_shape * 8, activation='relu'))
-        model.add(layers.Dense(output_shape * 4, activation='relu'))
-        model.add(layers.Dense(output_shape, activation='relu'))
+        if model_layers is None:
+            model.add(layers.SimpleRNN(128, return_sequences=True, activation='tanh', input_shape=input_shape))
+            model.add(layers.SimpleRNN(128 * 8, return_sequences=True, activation='tanh'))
+            model.add(layers.Dense(output_shape * 8, activation='relu'))
+            model.add(layers.Dense(output_shape * 4, activation='relu'))
+            model.add(layers.Dense(output_shape, activation='relu'))
+        else:
+            for layer in model_layers:
+                model.add(layer)
         model.compile(loss='mse', optimizer=RMSprop(learning_rate=0.005))
         model.summary()
         self.model = model
