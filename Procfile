@@ -1,1 +1,1 @@
-web: pip install . -U && music-generator-run
+web: sh setup.sh && streamlit run app.py
