@@ -2,6 +2,7 @@ import pypianoroll
 import numpy as np
 import matplotlib.pyplot as plt
 import IPython
+from music_generator.data import get_npz_data
 
 def flatten(pianorolls):
     """Automatically joins multiple pianorolls into a single sequence."""
@@ -25,13 +26,13 @@ def plot_pianoroll(pianoroll):
     """
 
     if len(pianoroll.shape) == 3:
-      pianoroll = flatten(pianoroll)
+        pianoroll = flatten(pianoroll)
     fig, ax = plt.subplots(figsize=(14,4))
     return pypianoroll.plot_pianoroll(ax=ax, pianoroll=pianoroll);
 
 def create_multitrack(basemultitrack, pianoroll):
     if len(pianoroll.shape) == 3:
-      pianoroll = flatten(pianoroll)
+        pianoroll = flatten(pianoroll)
     track = pypianoroll.StandardTrack(program=0, is_drum=False, pianoroll=pianoroll)
     tempo = basemultitrack.tempo[:pianoroll.shape[0]]
     return pypianoroll.Multitrack(tempo=tempo, tracks=[track])
@@ -67,7 +68,7 @@ def sample_multitrack(multitrack, track, x_qnotes=4, y_qnotes=2):
     return np.array(X), np.array(y)
 
 
-def multi_sample_pianorolls(pianorolls, qnote=24, x_qnotes=4, y_qnotes=4):
+def multi_sample_pianorolls(pianorolls, qnote=4, x_qnotes=4, y_qnotes=4):
     '''pianorolls = output of 'fetching_instrument_pianorolls' function in data.py.
     Returns an array concatenating all the samples of n songs.'''
     X = []
@@ -82,3 +83,35 @@ def multi_sample_pianorolls(pianorolls, qnote=24, x_qnotes=4, y_qnotes=4):
             X.append(pianoroll[X_start:X_end])
             y.append(pianoroll[y_start:y_end])
     return np.array(X), np.array(y)
+
+
+def multi_track_train_test(n_tracks, n_steps):
+    ''' returns X_train, y_train, X_test, y_test and multitracks
+    You can decide how many tracks you want to train your model with.
+    As some tracks are binary or have not enough steps, you won't have the
+    exact n_tracks number'''
+    multitracks = get_npz_data(n_tracks)
+    valid_track = []
+    X_final = []
+    y_final = []
+
+    for multi in multitracks:
+        for standard in multi:
+            if standard.name in 'Piano' and standard.pianoroll.shape[
+                    0] > n_steps * 2:
+                valid_track.append(standard)
+    for i in valid_track[:-1]:
+        X, y = sample_multitrack(multitracks[2], i, x_qnotes=12, y_qnotes=12)
+        X = X.reshape(X.shape[0] * X.shape[1], 128)[:n_steps]
+        y = y.reshape(y.shape[0] * y.shape[1], 128)[:n_steps]
+        X_final.append(X)
+        y_final.append(y)
+    X_test, y_test = sample_multitrack(multitracks[2],
+                                       valid_track[-1],
+                                       x_qnotes=12,
+                                       y_qnotes=12)
+    X_test = X_test.reshape(1, X_test.shape[0] * X_test.shape[1],
+                            128)[:, :n_steps]
+    y_test = y_test.reshape(y_test.shape[0] * y_test.shape[1], 128)[:n_steps]
+    return np.array(X_final), np.array(y_final), np.array(X_test), np.array(
+        y_test), multitracks
