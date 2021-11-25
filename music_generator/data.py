@@ -2,17 +2,24 @@ import pypianoroll
 import glob
 import os
 import math
+from tensorflow.python.lib.io import file_io
+import tensorflow as tf
+from io import BytesIO
 
 
-def get_npz_data(n):
+def get_npz_data(n, place):
     ''''
     Load n number of npz files from all of the folders contained in the raw_data folder
     '''
     # get a list of the possible filepaths for the npz files
     files = []
 
-    if 'CLOUDSDK_CONFIG' in os.environ:
+    if place == "colab":
       with open("/content/drive/MyDrive/lpd_5/list_file_drive.txt", 'r') as f:
+        for line in f:
+          files.append(line.rstrip('\n'))
+    elif place == "gcp":
+      with open("list_file_gcp_test.txt", 'r') as f:
         for line in f:
           files.append(line.rstrip('\n'))
     else:
@@ -21,7 +28,18 @@ def get_npz_data(n):
           files.append(line.rstrip('\n'))
 
     # Load n files from the dataset
-    multitracks = [pypianoroll.load(fp) for fp in files[0:n]]
+
+    if place == "gcp":
+      BUCKET_NAME = 'music-generator-713'
+      BUCKET_TRAIN_DATA_PATH = 'data/'
+
+      multitracks = []
+      for file in files:
+        f = BytesIO(file_io.read_file_to_string(f"gs://{BUCKET_NAME}/{BUCKET_TRAIN_DATA_PATH}{file}", binary_mode=True))
+        multitracks.append(pypianoroll.load(f))
+    else:
+      multitracks = [pypianoroll.load(fp) for fp in files[0:n]]
+
     return multitracks
 
 
