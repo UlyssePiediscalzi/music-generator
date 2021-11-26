@@ -33,5 +33,7 @@ termcolor
 pypianoroll
 pretty_midi
 pyfluidsynth
+music21
 
 streamlit
+
