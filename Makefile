@@ -84,3 +84,6 @@ BUCKET_FILE_NAME=$(shell basename ${LOCAL_PATH})
 
 upload_data:
 	@gsutil cp -r${LOCAL_PATH} gs://${BUCKET_NAME}/${BUCKET_FOLDER}/${BUCKET_FILE_NAME}
+
+run_api:
+	uvicorn api.fast-api:app --reload  # load web server with code autoreload
