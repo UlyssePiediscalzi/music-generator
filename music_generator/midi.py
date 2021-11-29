@@ -2,7 +2,7 @@ import pypianoroll
 import numpy as np
 import matplotlib.pyplot as plt
 import IPython
-from music21 import converter, instrument, note, chord
+from music21 import converter, instrument, note, chord, stream
 
 from music_generator.data import get_npz_data
 
@@ -156,3 +156,35 @@ def get_notes(midi):
     notes = [parseNote(n) for n in piano.recurse() if type(n)
              is note.Note or type(n) is chord.Chord]
     return notes
+
+def render_midi(notes):
+    output_notes = []
+    offset = 0
+    for pattern in notes:
+        pattern, duration = pattern.split(' for ')
+        duration = float(duration)
+        # if pattern is a chord
+        if ('.' in pattern) or pattern.isdigit():
+            notes_in_chord = pattern.split('.') # split the chord into number that each represent a note
+            
+            notes = []
+            for current_note in notes_in_chord:
+                new_note = note.Note(int(current_note)) # transform the number into a note object
+                new_note.storedInstrument = instrument.Piano() # set the instrument as piano
+                notes.append(new_note) # append the note to the list
+            new_chord = chord.Chord(notes) # transform the indivual notes into chord object
+            new_chord.offset = offset # set the offset
+            new_note.quarterLength = duration
+            output_notes.append(new_chord) # append the chord object to the output_notes
+        
+        # if pattern is a note
+        else:
+            new_note = note.Note(pattern) # transform the number into a note object
+            new_note.offset = offset # set the offset
+            new_note.quarterLength = duration
+            new_note.storedInstrument = instrument.Piano() # set the instrument as piano
+            output_notes.append(new_note) # append the note object to the output_notes
+
+        # increase offset each iteration so that notes do not stack
+        offset += duration
+    return stream.Stream(output_notes)
