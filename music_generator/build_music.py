@@ -14,8 +14,9 @@ def create_song():
   ###### DUMMY BEHAVIOR #######
   #load a song
   new_song = open('midi_songs_Eternal_Harvest.mid', 'rb')
-  return send_file(new_song, mimetype='audio/midi')
-
+  print(new_song)
+  #return send_file(new_song, mimetype='audio/midi')
+  return new_song
 
 def download_model():
   MODEL_NAME = "music-generator-model"
