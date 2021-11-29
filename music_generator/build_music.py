@@ -1,10 +1,14 @@
 
+from keras.models import load_model
 import h5py
 import tensorflow as tf
 import joblib
 from flask import send_file
 
-def create_song():
+
+model = load_model('weights.hdf5')
+
+def create_song(notes, model):
   ###### REAL BEHAVIOR #######
   #bring the model
   #download_model.predict(song)

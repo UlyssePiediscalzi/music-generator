@@ -3,7 +3,7 @@ from music_generator import build_music
 from os import path
 from base64 import b64encode
 
-st.write('MUSIC-GENERATOR')
+st.title('Music-Generator 1.0: Music Generation with an LSTM Neural Network')
 
 ###############################
 def get_binary_file_downloader_html(bin_file, file_label='File'):
@@ -20,32 +20,41 @@ def get_binary_file_downloader_html(bin_file, file_label='File'):
 #################################
 
 
+col1, col2, col3 = st.columns(3)
 all_notes = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#',
              'G', 'G#']
-first_note = st.selectbox('Select first note', all_notes)
-second_note = st.selectbox('Select second note', all_notes)
-third_note = st.selectbox('Select third note', all_notes)
-st.write(f"{first_note} {second_note} {third_note}")
+
+with col1:
+  st.subheader("Select 1st Note")
+  first_note = st.selectbox('Select first note', all_notes)
+
+with col2:
+  st.subheader("Select 2nd Note")
+  second_note = st.selectbox('Select second note', all_notes)
+
+with col3:
+  st.subheader("Select 3rd Note")
+  third_note = st.selectbox('Select third note', all_notes)
+
+notes = [first_note, second_note, third_note]
+
+st.header("Notes:")
+st.subheader(f"{first_note} {second_note} {third_note}")
+
 
 ########SEND_NOTES################
-if st.button('Send notes for predict'):
-    # print is visible in the server output, not in the page
-    st.write('I was clicked 🎉')
+if st.button('CREATE NEW SONG'):
+    #CALL BUILD_MUSIC/CREATE:SONG
+    new_song = build_music.create_song(notes)
 
-else:
-    st.write('I was not clicked 😞')
-
-########RECEIVE_NEW_MIDI################
-
-if st.button('request midi file'):
-    # print is visible in the server output, not in the page
-    new_song = build_music.create_song()
-    st.write('I was clicked 🎉')
+    #TRYING PLAYING DIRECTLY IN THE PAGE
     st.write(new_song)
-
     audio_bytes = new_song.read()
     st.audio(audio_bytes, format='mid')
+
+    #TODO-CHANGE-PATH
     fpath = "midi_songs_Eternal_Harvest.mid"
-    st.markdown(get_binary_file_downloader_html(fpath, 'MIDI'), unsafe_allow_html = True)
+    st.markdown(get_binary_file_downloader_html(fpath, 'MIDI'), unsafe_allow_html=True)
+
 else:
     st.write('I was not clicked 😞')
