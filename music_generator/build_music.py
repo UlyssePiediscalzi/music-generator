@@ -1,12 +1,9 @@
 
-import ipdb
 import random
 import tensorflow as tf
 #rom tensorflow import keras
 #from tensorflow.keras.models import load_model
 import h5py
-import joblib
-from flask import send_file
 import music21
 import glob
 import numpy as np
@@ -20,9 +17,7 @@ from tensorflow.keras import layers, models
 from tensorflow.keras.optimizers import RMSprop
 from tensorflow.keras.models import load_model
 
-
 model = load_model("raw_data/model_40seq_196voc_5tracks.h5")
-
 
 def create_song(song_name):
   ###### REAL BEHAVIOR ######
