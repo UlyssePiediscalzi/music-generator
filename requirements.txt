@@ -10,7 +10,6 @@ pandas
 scikit-learn
 jupyter
 tensorflow
-pickle
 
 # tests/linter
 black
