@@ -24,7 +24,7 @@ from tensorflow.keras.models import load_model
 model = load_model("raw_data/model_40seq_196voc_5tracks.h5")
 
 
-def create_song():
+def create_song(song_name):
   ###### REAL BEHAVIOR ######
 
   Music_notes, Melody = Malody_Generator(200)
@@ -33,7 +33,7 @@ def create_song():
   ################
   ###### DUMMY BEHAVIOR #######
   #load a song
-  Melody.write('midi', fp='raw_data/test_william.mid')
+  Melody.write('midi', fp=f'raw_data/{song_name}.mid')
   #new_song = open('raw_data/test_william.mid', 'rb')
   #print(new_song)
   #return send_file(new_song, mimetype='audio/midi')
@@ -55,39 +55,32 @@ def download_model():
 
 
 def chords_n_notes(Snippet):
-    Melody = []
-    offset = 0  # Incremental
-    for i in Snippet:
-        #If it is chord
-        if ("." in i or i.isdigit()):
-            chord_notes = i.split(".")  # Seperating the notes in chord
-            notes = []
-            for j in chord_notes:
-                inst_note = int(j)
-                note_snip = note.Note(inst_note)
-                notes.append(note_snip)
-                chord_snip = chord.Chord(notes)
-                chord_snip.offset = offset
-                Melody.append(chord_snip)
-        # pattern is a note
-        else:
-            note_snip = note.Note(i)
-            note_snip.offset = offset
-            Melody.append(note_snip)
-        # increase offset each iteration so that notes do not stack
-        offset += 0.5
-    Melody_midi = stream.Stream(Melody)
-    return Melody_midi
+  Melody = []
+  offset = 0  # Incremental
+  for i in Snippet:
+      #If it is chord
+      if ("." in i or i.isdigit()):
+          chord_notes = i.split(".")  # Seperating the notes in chord
+          notes = []
+          for j in chord_notes:
+              inst_note = int(j)
+              note_snip = note.Note(inst_note)
+              notes.append(note_snip)
+              chord_snip = chord.Chord(notes)
+              chord_snip.offset = offset
+              Melody.append(chord_snip)
+      # pattern is a note
+      else:
+          note_snip = note.Note(i)
+          note_snip.offset = offset
+          Melody.append(note_snip)
+      # increase offset each iteration so that notes do not stack
+      offset += 0.5
+  Melody_midi = stream.Stream(Melody)
+  return Melody_midi
 
-# Melody_Snippet = chords_n_notes(notes[:10])
-
-# show(Melody_Snippet)
 def Malody_Generator(Note_Count):
-
-    # with open('raw_data/chopin_leakage.pickle', mode='rb') as f:
-    #   pickle.dump({"dict": note_to_int, "net_in": network_input_train[:100]}, f)+
     pickle_model = pickle.load(open('raw_data/wil_deploy_dummy.pickle', 'rb'))
-
     network_input = pickle_model['network_input']
     print(len(network_input))
     pitchnames = pickle_model['pitchnames']
@@ -99,40 +92,18 @@ def Malody_Generator(Note_Count):
                        for number, note in enumerate(pitchnames))
     for i in range(Note_Count):
         n_vocab = len(int_to_note)
-
         seed = seed.reshape(1, 40, 1)
         prediction = model.predict(seed, verbose=0)[0]
-
-        print("/prediction"*100)
-        print(len(prediction))
-        print("/"*100)
         prediction = np.log(prediction)  # diversity
         exp_preds = np.exp(prediction) / 1
         prediction = exp_preds / np.sum(exp_preds)
         index = np.argmax(prediction)
         index_N = index / float(n_vocab)
         Notes_Generated.append(index)
-
-        #ipdb.set_trace()
-
-        print("/"*100)
-        print(int_to_note)
-        print("/"*100)
-        print(index)
-        print(Notes_Generated)
-
-
         Music = [int_to_note[char] for char in Notes_Generated]
-        # print(seed)
-        # print(len(seed))
         seed = np.insert(seed[0], len(seed[0]), index_N)
         seed = seed[1:]
     #Now, we have music in form or a list of chords and notes and we want to be a midi file.
     Melody = chords_n_notes(Music)
     Melody_midi = stream.Stream(Melody)
     return Music, Melody_midi
-
-
-#getting the Notes and Melody created by the model
-
-# show(Melody)

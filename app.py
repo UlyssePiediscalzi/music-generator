@@ -3,6 +3,7 @@ import streamlit as st
 from music_generator import build_music
 from os import path
 from base64 import b64encode
+from random import randrange
 
 st.set_page_config(
     page_title="Music-Generator 1.0",  # => Quick reference - Streamlit
@@ -45,6 +46,9 @@ st.header("Notes:")
 st.subheader(f"{first_note} {second_note} {third_note}  .")
 
 if st.button('CREATE NEW SONG'):
-    new_song = build_music.create_song()
-    fpath = "raw_data/test_william.mid"
+    song_name = f"test_song_number_{randrange(1000)}"
+    new_song = build_music.create_song(song_name)
+    fpath = f"raw_data/{song_name}.mid"
     st.markdown(get_binary_file_downloader_html(fpath, 'MIDI'), unsafe_allow_html=True)
+else:
+    st.write('I was not clicked 😞')
