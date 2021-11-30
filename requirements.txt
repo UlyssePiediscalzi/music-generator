@@ -7,8 +7,8 @@ wheel>=0.29
 # data science
 numpy
 pandas
-scikit-learn
-jupyter
+#scikit-learn
+#jupyter
 tensorflow-cpu
 
 # tests/linter
@@ -20,20 +20,20 @@ yapf
 
 # API
 gcsfs
-google-cloud-storage
-mlflow
+#google-cloud-storage
+#mlflow
 s3fs
 fastapi
 uvicorn
 
 # utilities
 six>=1.14
-joblib
+#joblib
 memoized-property
 termcolor
 
 # Music
-pypianoroll
+#pypianoroll
 pretty_midi
 pyfluidsynth
 music21
