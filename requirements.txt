@@ -34,7 +34,7 @@ memoized-property
 # Music
 #pypianoroll
 pretty_midi
-#pyfluidsynth
+pyfluidsynth
 music21
 
 streamlit
