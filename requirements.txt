@@ -1,7 +1,7 @@
 # packaging
 pip>=9
 setuptools>=26
-#twine
+twine
 wheel>=0.29
 
 # data science
@@ -10,12 +10,12 @@ numpy
 #jupyter
 #tensorflow-cpu
 
-# tests/linter
-# black
-# coverage
-# flake8
-# pytest
-# yapf
+tests/linter
+black
+coverage
+flake8
+pytest
+yapf
 
 # API
 # gcsfs
