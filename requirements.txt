@@ -10,7 +10,7 @@ numpy
 #jupyter
 #tensorflow-cpu
 
-tests/linter
+#tests/linter
 black
 coverage
 flake8
