@@ -1,14 +1,14 @@
 # packaging
 pip>=9
 setuptools>=26
-twine
+#twine
 wheel>=0.29
 
 # data science
 numpy
 #scikit-learn
 #jupyter
-tensorflow-cpu
+#tensorflow-cpu
 
 # tests/linter
 # black
