@@ -39,4 +39,4 @@ pyfluidsynth
 music21
 
 streamlit
-
+scipy
