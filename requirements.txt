@@ -21,7 +21,7 @@ tensorflow-cpu
 # gcsfs
 #google-cloud-storage
 #mlflow
-s3fs
+#s3fs
 fastapi
 uvicorn
 
@@ -34,7 +34,7 @@ memoized-property
 # Music
 #pypianoroll
 pretty_midi
-pyfluidsynth
+#pyfluidsynth
 music21
 
 streamlit
