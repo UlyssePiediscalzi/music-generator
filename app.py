@@ -5,7 +5,7 @@ from base64 import b64encode
 from random import randrange
 import requests
 import json
-from music21 import stream
+from music21 import stream, note
 import pretty_midi
 from scipy.io import wavfile
 import numpy as np
@@ -46,24 +46,27 @@ with col3:
   st.subheader("Select 3rd Note")
   third_note = st.selectbox('Select third note', all_notes)
 
-notes = [first_note, second_note, third_note]
+notes = [note.Note(first_note), note.Note(second_note), note.Note(third_note)]
 
 st.header("Notes:")
-st.subheader(f"{first_note} {second_note} {third_note}  .")
+st.subheader(f"{notes}  .")
 
 if st.button('CREATE NEW SONG'):
     url = "https://music-generator-api-zyjtckkcoa-uc.a.run.app/predict"
     local_url = "http://localhost:8000/predict"
     #CALL API
-    response = requests.get(url)
+    response = requests.get(local_url)
     response = response.json()
     Music_notes = response['notes']
     Music_notes = json.loads(Music_notes)
 
+    Music_durations = response['durations']
+    Music_durations = json.loads(Music_durations)
+
     #FINISHING CALLING API
 
     # CREATE MELODY
-    Melody = build_music.chords_n_notes(Music_notes)
+    Melody = build_music.chords_n_notes(Music_notes, Music_durations, notes)
     Melody_midi = stream.Stream(Melody)
     song_name = f"test_song_number_{randrange(1000)}"
     fpath = f"{song_name}.mid"
