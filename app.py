@@ -32,7 +32,7 @@ if st.button("Generate new notes"):
     local_url = "http://localhost:8000/random_notes"
 
     with st.spinner('Wait for it...'):
-      response = requests.get(local_url)
+      response = requests.get(url)
       response = response.json()
       st.success('Notes created!')
 
@@ -77,7 +77,7 @@ if st.button('Create new song'):
           "user_input_notes": json.dumps(st.session_state.user_input_notes),
           "user_input_durations": json.dumps(st.session_state.user_input_durations)
       }
-      response = requests.get(local_url, params = params)
+      response = requests.get(url, params = params)
       response = response.json()
       Music_notes = response['notes']
       Music_notes = json.loads(Music_notes)
