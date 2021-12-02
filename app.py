@@ -55,7 +55,7 @@ if st.button('CREATE NEW SONG'):
     url = "https://music-generator-api-zyjtckkcoa-uc.a.run.app/predict"
     local_url = "http://localhost:8000/predict"
     #CALL API
-    response = requests.get(local_url)
+    response = requests.get(url)
     response = response.json()
     Music_notes = response['notes']
     Music_notes = json.loads(Music_notes)
