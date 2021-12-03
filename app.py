@@ -98,25 +98,21 @@ if st.button('Create new song'):
       fpath = f"{song_name}.mid"
       midi_file = Melody_midi.write('midi', fp=fpath)
 
-      with st.spinner(f"Transcribing to FluidSynth"):
-        midi_data = pretty_midi.PrettyMIDI(midi_file)
-        audio_data = midi_data.synthesize()
-        audio_data = np.int16(
-            audio_data / np.max(np.abs(audio_data)) * 32767 * 0.9
-        )  # -- Normalize for 16 bit audio https://github.com/jkanner/streamlit-audio/blob/main/helper.py
 
-        virtualfile = io.BytesIO()
-        wavfile.write(virtualfile, 44100, audio_data)
+      midi_data = pretty_midi.PrettyMIDI(midi_file)
+      audio_data = midi_data.synthesize()
+      audio_data = np.int16(
+          audio_data / np.max(np.abs(audio_data)) * 32767 * 0.9
+      )  # -- Normalize for 16 bit audio https://github.com/jkanner/streamlit-audio/blob/main/helper.py
 
-        st.success('Listen the next hit!')
-    st.audio(virtualfile)
-    col7, col8, col9 = st.columns(3)
-    #col2.markdown(get_binary_file_downloader_html(fpath, 'MIDI'), unsafe_allow_html=True)
-    st.download_button(
-        label="Download midi file",
-        data=fpath,
-        file_name=fpath,
-        mime='audio/mid',
-    )
+      virtualfile = io.BytesIO()
+      wavfile.write(virtualfile, 44100, audio_data)
+
+      st.success('Listen to the next hit!')
+      st.audio(virtualfile)
+
+      col7, col8, col9 = st.columns(3)
+      col8.markdown(get_binary_file_downloader_html(fpath, 'MIDI'), unsafe_allow_html=True)
+
 
 
