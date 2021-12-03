@@ -10,6 +10,7 @@ import pretty_midi
 from scipy.io import wavfile
 import numpy as np
 import io
+from PIL import Image
 
 def get_binary_file_downloader_html(bin_file, file_label='File'):
     with open(bin_file, 'rb') as f:
@@ -25,6 +26,7 @@ st.set_page_config(
     initial_sidebar_state="auto")  # collapsed
 
 st.title('Piano Melodies Generator 1.0')
+st.markdown("What if Deep Learning could generate some pleasant piano melodies?")
 
 # if st.checkbox("Run", key="A"):
 if st.button("Generate new notes"):
@@ -113,6 +115,5 @@ if st.button('Create new song'):
 
       col7, col8, col9 = st.columns(3)
       col8.markdown(get_binary_file_downloader_html(fpath, 'MIDI'), unsafe_allow_html=True)
-
-
+      st.markdown("* For a better experience listening to the audio, download and play it in Digital Audio Workstation DAW software (Garageband, LogicPro)")
 
