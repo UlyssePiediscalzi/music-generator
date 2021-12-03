@@ -18,18 +18,18 @@ def chords_n_notes(SnippetNote, SnippetDur):
               chord_snip.offset = offset
               if k <= 3.0:
                 chord_snip.duration = duration.Duration(k)
-                Melody.append(chord_snip)
               else:
                 pass
+              Melody.append(chord_snip)
       # pattern is a note
       else:
           note_snip = note.Note(i)
           note_snip.offset = offset
           if k <= 3.0:
             note_snip.duration = duration.Duration(k)
-            Melody.append(note_snip)
           else:
             pass
+          Melody.append(note_snip)
       # increase offset each iteration so that notes do not stack
       offset += 0.5
 
